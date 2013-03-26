@@ -15,11 +15,12 @@
 // used to ensure all triplets that are accessed via the operator<< are initialised.
 std::set<const void*> registered;
 
-struct triplet
+template <class T>
+struct triplet_t
 {
-  typedef int value_type;
+  typedef T value_type;
 
-  triplet(value_type a, value_type b, value_type c)
+  triplet_t(value_type a, value_type b, value_type c)
   {
     d[0] = a;
     d[1] = b;
@@ -29,7 +30,7 @@ struct triplet
     registered.insert(this).second;
   }
 
-  triplet(const triplet & x)
+  triplet_t(const triplet_t & x)
   {
     d[0] = x.d[0];
     d[1] = x.d[1];
@@ -39,14 +40,14 @@ struct triplet
     registered.insert(this).second;
   }
 
-  ~triplet()
+  ~triplet_t()
   {
     bool unreg_ok = (registered.find(this) != registered.end());
     assert(unreg_ok);
     registered.erase(this);
   }
 
-  double distance_to(triplet const& x) const
+  double distance_to(triplet_t const& x) const
   {
      double dist = 0;
      for (int i = 0; i != 3; ++i)
@@ -58,6 +59,9 @@ struct triplet
 
   value_type d[3];
 };
+
+
+typedef triplet_t<int> triplet;
 
 
 
@@ -78,17 +82,20 @@ struct alternate_triplet
   value_type d[3];
 };
 
-inline bool operator==(triplet const& A, triplet const& B) {
+template <class T>
+bool operator==(triplet_t<T> const& A, triplet_t<T> const& B) {
   return A.d[0] == B.d[0] && A.d[1] == B.d[1] && A.d[2] == B.d[2];
 }
 
-std::ostream& operator<<(std::ostream& out, triplet const& T)
+template <class T>
+std::ostream& operator<<(std::ostream& out, triplet_t<T> const& T)
 {
   assert(registered.find(&T) != registered.end());
   return out << '(' << T.d[0] << ',' << T.d[1] << ',' << T.d[2] << ')';
 }
 
 inline double tac( triplet t, size_t k ) { return t[k]; }
+inline double tac_dbl( triplet_t<double> t, size_t k ) { return t[k]; }
 
 // use tac as a class instead of a function,
 // can access more than one type with just 1 definition.
@@ -113,7 +120,7 @@ struct Predicate
 // never finds anything
 struct FalsePredicate
 {
-   bool operator()( triplet const& t ) const { return false; }
+   bool operator()( triplet const& ) const { return false; }
 };
 
 int main()
@@ -165,8 +172,8 @@ int main()
         // call find_nearest without a range value - it found a compile error earlier.
       std::pair<tree_type::const_iterator,double> found = exact_dist.find_nearest(target);
       assert(found.first != exact_dist.end());
-      std::cout << "Test find_nearest(), found at exact distance away from " << target << ", found " << *found.first << " @ " << found.second << " should be " << std::sqrt(8) << std::endl;
-      assert(found.second == std::sqrt(8));
+      std::cout << "Test find_nearest(), found at exact distance away from " << target << ", found " << *found.first << " @ " << found.second << " should be " << std::sqrt(8.0) << std::endl;
+      assert(found.second == std::sqrt(8.0));
    }
 
    {
@@ -175,10 +182,10 @@ int main()
         exact_dist.insert(c0);
         triplet target(7,4,0);
 
-      std::pair<tree_type::const_iterator,double> found = exact_dist.find_nearest(target,std::sqrt(8));
+      std::pair<tree_type::const_iterator,double> found = exact_dist.find_nearest(target,std::sqrt(8.0));
       assert(found.first != exact_dist.end());
-      std::cout << "Test find_nearest(), found at exact distance away from " << target << ", found " << *found.first << " @ " << found.second << " should be " << std::sqrt(8) << std::endl;
-      assert(found.second == std::sqrt(8));
+      std::cout << "Test find_nearest(), found at exact distance away from " << target << ", found " << *found.first << " @ " << found.second << " should be " << std::sqrt(8.0) << std::endl;
+      assert(found.second == std::sqrt(8.0));
    }
 
   tree_type src(std::ptr_fun(tac));
@@ -228,7 +235,7 @@ int main()
 
   tree_type copied(src);
   std::cout << copied << std::endl;
-  tree_type assigned;
+  tree_type assigned(std::ptr_fun(tac));
   assigned = src;
   std::cout << assigned << std::endl;
 
@@ -381,20 +388,23 @@ int main()
   // Walter reported that the find_within_range() wasn't giving results that were within
   // the specified range... this is the test.
   {
-     tree_type tree(std::ptr_fun(tac));
-     tree.insert( triplet(28.771200,16.921600,-2.665970) );
-     tree.insert( triplet(28.553101,18.649700,-2.155560) );
-     tree.insert( triplet(28.107500,20.341400,-1.188940) );
+     // note: we need to store doubles in this tree.
+     typedef KDTree::KDTree<3, triplet_t<double>, std::pointer_to_binary_function<triplet_t<double>,size_t,double> > dbl_tree_type;
+
+     dbl_tree_type tree(std::ptr_fun(tac_dbl));
+     tree.insert( triplet_t<double>(28.771200,16.921600,-2.665970) );
+     tree.insert( triplet_t<double>(28.553101,18.649700,-2.155560) );
+     tree.insert( triplet_t<double>(28.107500,20.341400,-1.188940) );
      tree.optimise();
 
-     std::deque< triplet > vectors;
-     triplet sv(18.892500,20.341400,-1.188940);
+     std::deque< triplet_t<double> > vectors;
+     triplet_t<double> sv(18.892500,20.341400,-1.188940);
      tree.find_within_range(sv, 10.0f, std::back_inserter(vectors));
 
      std::cout << std::endl << "Test find_with_range( " << sv << ", 10.0f) found " << vectors.size() << " candidates." << std::endl;
 
      // double-check the ranges
-     for (std::deque<triplet>::iterator v = vectors.begin(); v != vectors.end(); ++v)
+     for (std::deque<triplet_t<double> >::iterator v = vectors.begin(); v != vectors.end(); ++v)
      {
         double dist = sv.distance_to(*v);
         std::cout << "  " << *v << " dist=" << dist << std::endl;
