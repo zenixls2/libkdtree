@@ -1216,10 +1216,10 @@ namespace KDTree
       o << "root node:   " << tree._M_root << std::endl;
 
       if (tree.empty())
-        return o << "[empty " << __K << "d-tree " << &tree << "]";
+        return o << "[empty " << tree.dimension() << "d-tree " << &tree << "]";
 
       o << "nodes total: " << tree.size() << std::endl;
-      o << "dimensions:  " << __K << std::endl;
+      o << "dimensions:  " << tree.dimension() << std::endl;
 
       typedef KDTree<_Val, _Acc, _Dist, _Cmp, _Alloc> _Tree;
       typedef typename _Tree::_Link_type _Link_type;

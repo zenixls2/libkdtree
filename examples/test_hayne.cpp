@@ -32,7 +32,7 @@ struct duplet
    value_type d[2];
 };
 
-typedef KDTree::KDTree<2, duplet, std::pointer_to_binary_function<duplet,int,double> > duplet_tree_type;
+typedef KDTree::KDTree<duplet, std::pointer_to_binary_function<duplet,int,double> > duplet_tree_type;
 
 inline double return_dup( duplet d, int k ) { return d[k]; }
 
@@ -40,7 +40,7 @@ inline double return_dup( duplet d, int k ) { return d[k]; }
 
 int main()
 {
-   duplet_tree_type dupl_tree_test(std::ptr_fun(return_dup));
+   duplet_tree_type dupl_tree_test(2, std::ptr_fun(return_dup));
    std::vector<duplet> vDuplets;
 
    //srand(time(0));

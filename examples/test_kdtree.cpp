@@ -88,10 +88,10 @@ bool operator==(triplet_t<T> const& A, triplet_t<T> const& B) {
 }
 
 template <class T>
-std::ostream& operator<<(std::ostream& out, triplet_t<T> const& T)
+std::ostream& operator<<(std::ostream& out, triplet_t<T> const& t)
 {
-  assert(registered.find(&T) != registered.end());
-  return out << '(' << T.d[0] << ',' << T.d[1] << ',' << T.d[2] << ')';
+  assert(registered.find(&t) != registered.end());
+  return out << '(' << t.d[0] << ',' << t.d[1] << ',' << t.d[2] << ')';
 }
 
 inline double tac( triplet t, size_t k ) { return t[k]; }
@@ -107,7 +107,7 @@ struct alternate_tac
 };
 
 
-typedef KDTree::KDTree<3, triplet, std::pointer_to_binary_function<triplet,size_t,double> > tree_type;
+typedef KDTree::KDTree<triplet, std::pointer_to_binary_function<triplet,size_t,double> > tree_type;
 
 struct Predicate
 {
@@ -127,7 +127,7 @@ int main()
 {
    // check that it'll find nodes exactly MAX away
    {
-      tree_type exact_dist(std::ptr_fun(tac));
+      tree_type exact_dist(3, std::ptr_fun(tac));
         triplet c0(5, 4, 0);
         exact_dist.insert(c0);
         triplet target(7,4,0);
@@ -141,11 +141,11 @@ int main()
    // do the same test, except use alternate_triplet as the search key
    {
       // NOTE: stores triplet, but we search with alternate_triplet
-      typedef KDTree::KDTree<3, triplet, alternate_tac> alt_tree;
+      typedef KDTree::KDTree<triplet, alternate_tac> alt_tree;
 
       triplet actual_target(7,0,0);
 
-      alt_tree tree;
+      alt_tree tree(3);
       tree.insert( triplet(0, 0, 7) );
       tree.insert( triplet(0, 0, 7) );
       tree.insert( triplet(0, 0, 7) );
@@ -164,7 +164,7 @@ int main()
 
 
    {
-      tree_type exact_dist(std::ptr_fun(tac));
+      tree_type exact_dist(3, std::ptr_fun(tac));
         triplet c0(5, 2, 0);
         exact_dist.insert(c0);
         triplet target(7,4,0);
@@ -177,7 +177,7 @@ int main()
    }
 
    {
-      tree_type exact_dist(std::ptr_fun(tac));
+      tree_type exact_dist(3, std::ptr_fun(tac));
         triplet c0(5, 2, 0);
         exact_dist.insert(c0);
         triplet target(7,4,0);
@@ -188,7 +188,7 @@ int main()
       assert(found.second == std::sqrt(8.0));
    }
 
-  tree_type src(std::ptr_fun(tac));
+  tree_type src(3, std::ptr_fun(tac));
 
   triplet c0(5, 4, 0); src.insert(c0);
   triplet c1(4, 2, 1); src.insert(c1);
@@ -235,7 +235,7 @@ int main()
 
   tree_type copied(src);
   std::cout << copied << std::endl;
-  tree_type assigned(std::ptr_fun(tac));
+  tree_type assigned(3, std::ptr_fun(tac));
   assigned = src;
   std::cout << assigned << std::endl;
 
@@ -389,9 +389,9 @@ int main()
   // the specified range... this is the test.
   {
      // note: we need to store doubles in this tree.
-     typedef KDTree::KDTree<3, triplet_t<double>, std::pointer_to_binary_function<triplet_t<double>,size_t,double> > dbl_tree_type;
+     typedef KDTree::KDTree<triplet_t<double>, std::pointer_to_binary_function<triplet_t<double>,size_t,double> > dbl_tree_type;
 
-     dbl_tree_type tree(std::ptr_fun(tac_dbl));
+     dbl_tree_type tree(3, std::ptr_fun(tac_dbl));
      tree.insert( triplet_t<double>(28.771200,16.921600,-2.665970) );
      tree.insert( triplet_t<double>(28.553101,18.649700,-2.155560) );
      tree.insert( triplet_t<double>(28.107500,20.341400,-1.188940) );
