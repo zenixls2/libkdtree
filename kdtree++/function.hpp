@@ -12,64 +12,51 @@
 
 namespace KDTree
 {
-  template <typename _Val>
-  struct _Bracket_accessor
-  {
-    typedef typename _Val::value_type result_type;
+template <typename _Val>
+struct _Bracket_accessor {
+  typedef typename _Val::value_type result_type;
 
-    result_type
-    operator()(_Val const& V, size_t const N) const
-    {
-      return V[N];
-    }
-  };
+  result_type
+  operator()(_Val const& V, size_t const N) const {
+    return V[N];
+  }
+};
 
-  template <typename _Tp>
-  struct always_true
-  {
-    bool operator() (const _Tp& ) const { return true; }
-  };
+template <typename _Tp>
+struct always_true {
+  bool operator() (const _Tp& ) const { return true; }
+};
 
-  template <typename _Tp, typename _Dist>
-  struct squared_difference
-  {
-    typedef _Dist distance_type;
+template <typename _Tp, typename _Dist>
+struct squared_difference {
+  typedef _Dist distance_type;
 
-    distance_type
-    operator() (const _Tp& __a, const _Tp& __b) const
-    {
-      distance_type d=__a - __b;
-      return d*d;
-    }
-  };
+  distance_type
+  operator() (const _Tp& __a, const _Tp& __b) const {
+    distance_type d=__a - __b;
+    return d*d;
+  }
+};
 
-  template <typename _Tp, typename _Dist>
-  struct squared_difference_counted
-  {
-    typedef _Dist distance_type;
+template <typename _Tp, typename _Dist>
+struct squared_difference_counted {
+  typedef _Dist distance_type;
 
-    squared_difference_counted()
-      : _M_count(0)
-    { }
+  squared_difference_counted() : _M_count(0) { }
 
-    void reset ()
-    { _M_count = 0; }
+  void reset () { _M_count = 0; }
 
-    long&
-    count () const
-    { return _M_count; }
+  long& count () const { return _M_count; }
 
-    distance_type
-    operator() (const _Tp& __a, const _Tp& __b) const
-    {
-      distance_type d=__a - __b;
-      ++_M_count;
-      return d*d;
-    }
+  distance_type operator() (const _Tp& __a, const _Tp& __b) const {
+    distance_type d=__a - __b;
+    ++_M_count;
+    return d*d;
+  }
 
-  private:
-    mutable long _M_count;
-  };
+ private:
+  mutable long _M_count;
+};
 
 } // namespace KDTree
 
