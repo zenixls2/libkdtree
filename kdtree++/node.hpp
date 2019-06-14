@@ -65,14 +65,7 @@ namespace KDTree
        friend
        std::basic_ostream<Char, Traits>&
        operator<<(typename std::basic_ostream<Char, Traits>& out,
-                  _Node_base const& node)
-       {
-         out << &node;
-         out << " parent: " << node._M_parent;
-         out << "; left: " << node._M_left;
-         out << "; right: " << node._M_right;
-         return out;
-       }
+                  _Node_base const& node);
 
      template <typename Char, typename Traits>
        friend
@@ -343,6 +336,17 @@ namespace KDTree
        (__dim, __max));
   }
 
+ template <typename Char, typename Traits>
+   std::basic_ostream<Char, Traits>&
+   operator<<(typename std::basic_ostream<Char, Traits>& out,
+              _Node_base const& node)
+   {
+     out << &node;
+     out << " parent: " << node._M_parent;
+     out << "; left: " << node._M_left;
+     out << "; right: " << node._M_right;
+     return out;
+   }
 
 } // namespace KDTree
 

@@ -9,10 +9,13 @@ if (WIN32)
    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 
    # Be strict about warnings... make them errors
-   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+   # set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+   # Disabled for now, need to clean up size_t vs int usage,
+   # compile in 64 bit mode to see warnings.
 
    # Detect 64-bit portability issues
-   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wp64")
+   # set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wp64")
+   # Disable, is deprecated in MSVC2010+
 
 else (WIN32)
 
