@@ -120,8 +120,7 @@ inline typename _Dist::distance_type _S_node_distance(
     The distance functor and the accessor are references to the template
     parameters of the KDTree.
  */
-template <typename _ValA, typename _ValB, typename _Dist,
-    typename _Acc>
+template <typename _ValA, typename _ValB, typename _Dist, typename _Acc>
 inline typename _Dist::distance_type _S_accumulate_node_distance(
     const size_t __dim, const _Dist& __dist, const _Acc& __acc,
     const _ValA& __a, const _ValB& __b) {
@@ -175,7 +174,7 @@ inline std::pair<const NodeType*,
       typename _Dist::distance_type d = 0;
       for (size_t i=0; i != __k; ++i)
         d += _S_node_distance(i, __dist, __acc, __val, cur->_M_value);
-       d = std::sqrt(d);
+      d = std::sqrt(d);
       if (d <= __max) {
         // ("bad candidate notes")
         // Changed: removed this test: || ( d == __max && cur < __best ))

@@ -68,6 +68,7 @@
 #endif
 #include <algorithm>
 #include <functional>
+#include <queue>
 
 #ifdef KDTREE_DEFINE_OSTREAM_OPERATORS
 #  include <ostream>
@@ -123,6 +124,17 @@ class KDTree : protected _Alloc_base<_Val, _Alloc> {
   typedef size_t size_type;
   typedef ptrdiff_t difference_type;
 
+ protected:
+  typedef std::pair<distance_type, _Link_const_type> queue_val_type;
+  struct prio_queue_cmp {
+    constexpr bool operator()(
+        const queue_val_type& left, const queue_val_type& right) {
+      return left.first < right.first;
+    }
+  };
+  typedef std::priority_queue<queue_val_type, std::vector<queue_val_type>,
+                              prio_queue_cmp> prio_queue_type;
+ public:
   KDTree(size_type __k, _Acc const& __acc = _Acc(), _Dist const& __dist = _Dist(),
          _Cmp const& __cmp = _Cmp(), const allocator_type& __a = allocator_type())
         : _Base(__a), _M_header(),
@@ -456,6 +468,22 @@ class KDTree : protected _Alloc_base<_Val, _Alloc> {
     return out;
   }
 
+  template <typename SearchVal, typename _OutputIterator>
+  _OutputIterator find_n_nearest(
+      SearchVal const& __val, size_type __n, _OutputIterator out) const {
+    const _Node<_Val>* node = _M_get_root();
+    if (node) {
+      prio_queue_type queue;
+      _S_node_n_nearest(0, __val, node, queue,
+                        std::numeric_limits<distance_type>::infinity(), __n);
+      while (!queue.empty()) {
+        *out++ = _S_value(queue.top().second);
+        queue.pop();
+      }
+    }
+    return out;
+  }
+
   template <class SearchVal>
   std::pair<const_iterator, distance_type> find_nearest(
       SearchVal const& __val, distance_type __max) const {
@@ -470,8 +498,7 @@ class KDTree : protected _Alloc_base<_Val, _Alloc> {
           __max = root_dist;
         }
       }
-      std::pair<const _Node<_Val>*,
-      std::pair<size_type, typename _Acc::result_type> >
+      std::pair<const _Node<_Val>*, std::pair<size_type, typename _Acc::result_type>>
       best = _S_node_nearest(__K, 0, __val, _M_get_root(), &_M_header,
                              node, __max, _M_cmp, _M_acc, _M_dist,
                              always_true<value_type>());
@@ -994,6 +1021,40 @@ class KDTree : protected _Alloc_base<_Val, _Alloc> {
 
   static _Link_const_type _S_maximum(_Link_const_type __X) {
     return static_cast<_Link_const_type>( _Node_base::_S_maximum(__X) );
+  }
+
+  template<typename SearchVal>
+  void _S_node_n_nearest(size_type __dim, SearchVal const& __val,
+                         _Link_const_type node, prio_queue_type& queue,
+                         distance_type __max, size_type n) const {
+    if (node == nullptr) return;
+    distance_type d = 0;
+    for (size_type i=0; i != __K; ++i) {
+      d += _M_dist(_M_acc(__val, i), _M_acc(node->_M_value, i));
+    }
+    if (d <= __max * __max) {
+      queue.push({d, node});
+      if (queue.size() > n) {
+        queue.pop();
+      }
+    }
+    __dim = __dim % __K;
+    _Link_const_type cur = nullptr;
+    _Link_const_type revCur = nullptr;
+    if (_S_node_compare(__dim, _M_cmp, _M_acc, __val, node->_M_value)) {
+      cur = static_cast<_Link_const_type>(node->_M_right);
+      revCur = static_cast<_Link_const_type>(node->_M_left);
+    } else {
+      cur = static_cast<_Link_const_type>(node->_M_left);
+      revCur = static_cast<_Link_const_type>(node->_M_right);
+    }
+    _S_node_n_nearest(__dim + 1, __val, cur, queue, __max, n);
+
+
+    distance_type diff = std::abs(_M_acc(node->_M_value, __dim) - _M_acc(__val, __dim));
+    if (queue.size() < n || diff < queue.top().first) {
+      _S_node_n_nearest(__dim + 1, __val, revCur, queue, __max, n);
+    }
   }
 
 
