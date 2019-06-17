@@ -1,5 +1,11 @@
 libkdtree++ ChangeLog
 =====================
+2019-06-17  zenix huang <zenixls2@gmail.com>
+
+	- Add find_n_nearest. Add tests to find_n_nearest
+	- merge nvmd's branch and debian patches to the code base
+	- fix compilation issues. Now able to compile with gcc-9.0.0
+	  fix examples according to the changes by nvmd.
 
 2008-11-17  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
