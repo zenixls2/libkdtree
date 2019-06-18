@@ -1,25 +1,25 @@
 libkdtree++ ChangeLog
 =====================
-2019-06-17  zenix huang <zenixls2@gmail.com>
+### 2019-06-17  zenix huang <zenixls2@gmail.com>
 
   - Add find\_n\_nearest. Add tests to find\_n\_nearest
   - merge nvmd's branch and debian patches to the code base
   - fix compilation issues. Now able to compile with gcc-9.0.0
     fix examples according to the changes by nvmd.
 
-2008-11-17  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
+### 2008-11-17  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
   - Added #include<cstdio> in order to compile 'printf' statements in the
     file 'examples/test_find_within_range.cpp'.
   - Added patch from Max Fellermann in order to compile libkdtree++ with
     clang++.
 
-2009-02-10  Paul Harris <paulharris@computer.org>
+### 2009-02-10  Paul Harris <paulharris@computer.org>
 
   - Bug fix: was incorrectly casting a pointer when the search key type
     was different to the stored type.
 
-2008-12-30  Paul Harris <paulharris@computer.org>
+### 2008-12-30  Paul Harris <paulharris@computer.org>
 
   - New function: efficient\_replace\_and\_optimise().
     Yes, its a long name. Sylvain doesn't like it.
@@ -51,7 +51,7 @@ libkdtree++ ChangeLog
     Does not install python module into the python site packages or anything
     like that.
 
-2008-11-17  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
+### 2008-11-17  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
   - The version number of the library is now part of the headers.
   - Fixed a bug with assignment operator.
@@ -69,7 +69,7 @@ libkdtree++ ChangeLog
   - Paul Harris fixed bug with compiling with MSVC2005 with the 64bit
     warnings turned on.
 
-2008-11-12  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
+### 2008-11-12  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
   - Fix segfault on the regular iterator when \_M\_header->\_M\_right ==
     \_M\_root. Fix segfault on the reverse iterator when \_M\_header->\_M\_left ==
@@ -80,7 +80,7 @@ libkdtree++ ChangeLog
   iterator points to an undetermined location in the tree, similarly to
   the current implementation of GNU libstdc++.
 
-2008-11-10  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
+### 2008-11-10  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
   - kdtree++/iterator.hpp (KDTree): the decrement iterator was
     ill-written. Its buggy behavior, and the use of non-standard
@@ -99,14 +99,14 @@ libkdtree++ ChangeLog
     are at the header.
 
 
-2008-11-10 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
+### 2008-11-10 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
   - patch from Martin Shreiber to make libkdtree to compile with newer
     version of g++-4.2 and g++4.3.
 
   - patch from Paul Harris to make libkdtree more exception transparent.
 
-2007-12-08 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
+### 2007-12-08 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
   - fix bug where find\_nearest() could return the wrong value if a
     maximum distance greater than the root distance to the target value
@@ -120,7 +120,7 @@ libkdtree++ ChangeLog
     memory address will be returned. This is to catter for the
     reimplementation of find_exact() coming soon.
 
-2007-12-02 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
+### 2007-12-02 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
   - find\_nearest() now returned the SQUARED value of the distance for
     euclidean space calculation (the default). You have to use sqrt() on
@@ -154,11 +154,11 @@ libkdtree++ ChangeLog
   - The file accessor.hpp was renamed as function.hpp for it now boast
     more than just the KDTree accessor
 
-2007-11-25 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
+### 2007-11-25 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
   - fixed the reverse\_iterator. Now it can be used.
 
-2007-10-24  Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
+### 2007-10-24  Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
   - Removal of all the warnings that are yield by the compiler when
   using the following flags:
@@ -180,7 +180,7 @@ libkdtree++ ChangeLog
   - check\_tree() and num\_dist\_calcs for debugging purpose plus
     additional improvements on erase and region intersection
 
-2004-11-26  Paul Harris (paulharris@computer.org)
+### 2004-11-26  Paul Harris (paulharris@computer.org)
 
   - New feature: find\_nearest()
   - Accessors can now be initialised with the tree, so ptr\_fun() 
@@ -191,17 +191,17 @@ libkdtree++ ChangeLog
     the construction of a filled tree.
   - \_Range is now more easy to construct.
 
-2004-11-15  Martin F. Krafft (libkdtree@pobox.madduck.net)
+### 2004-11-15  Martin F. Krafft (libkdtree@pobox.madduck.net)
 
   - fixed numerous little bugs that led to compilation problems
   - changed code to compile cleanly with GCC 3.4 and GCC 4.0
 
-2004-11-06  Martin F. Krafft (libkdtree@pobox.madduck.net)
+### 2004-11-06  Martin F. Krafft (libkdtree@pobox.madduck.net)
 
   - reverted to optimise() to prevent API change, and added an optimize()
     passthrough method with an appropriate comment.
 
-2004-11-05  Paul Harris (paulharris@computer.org)
+### 2004-11-05  Paul Harris (paulharris@computer.org)
 
   - Renamed optimise() to optimize().
   - Added a full set of range constructors and insert(range) methods.
@@ -213,7 +213,7 @@ libkdtree++ ChangeLog
   - Added a new method: count\_within\_range().
   - Fixed bug in rend().
 
-2004-11-04  Martin F. Krafft (libkdtree@pobox.madduck.net)
+### 2004-11-04  Martin F. Krafft (libkdtree@pobox.madduck.net)
 
   - Integrated patch by Paul Harris to fix a logic error pertaining to
     OutputIterators in find_within_range. find_within_range() now
@@ -222,11 +222,11 @@ libkdtree++ ChangeLog
     a dimensional overflow for trees with depths >= K. Thanks (again) Paul!
   - Made some improvements to the autotools files.
 
-2004-05-11  Martin F. Krafft (libkdtree@pobox.madduck.net)
+### 2004-05-11  Martin F. Krafft (libkdtree@pobox.madduck.net)
 
   - Fixed CFlags and Libs entries in pkgconfig file.
 
-2004-05-11  Martin F. Krafft (libkdtree@pobox.madduck.net)
+### 2004-05-11  Martin F. Krafft (libkdtree@pobox.madduck.net)
 
   - Initial release.
 
