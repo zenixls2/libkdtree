@@ -75,10 +75,10 @@ It now also supports cmake, which can be used to build the examples
 and tests.
 To build with cmake, do an out-of-source build like so:
 
+```bash
 # ASSUMING you have decompressed it into a directory called libkdtree,
 # and you are currently in that directory...
 
-```bash
 mkdir build
 cd build
 cmake ..
