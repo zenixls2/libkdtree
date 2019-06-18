@@ -25,7 +25,7 @@ sorting, using a kd-tree. It:
     operations (insert/erase/find optimised) and worst-case O(n) space.
   - provides a means to rebalance and thus optimise the tree.
   - exists in its own namespace
-  - uses STL coding style, basing a lot of the code on stl_tree.h
+  - uses STL coding style, basing a lot of the code on stl\_tree.h
 
 Notes
 -----
@@ -47,14 +47,14 @@ Credits (Martin F. Kraft)
 While the library was written all by myself, it would not have been possible
 without the help of a number of people. Foremost, I would like to thank the
 folks from the #c++ channel on Freenode, specifically (in no particular order)
-orbitz, quix, Erwin, pwned, wcstok, dasOp, Chaku, Adrinael, The_Vulture, and
+orbitz, quix, Erwin, pwned, wcstok, dasOp, Chaku, Adrinael, The\_Vulture, and
 LIM2 (if I left anyone out, let me know). Finally, I thank the Artificial
 Intelligence Laboratory of the University of Zurich, Dr. Peter Eggenberger and
 Gabriel Gómez for giving me the opportunity to write this stuff.
 
 Since libkdtree++ makes an effort to stay as close as possible to the feel of
 a STL container, concepts and inspiration was gained from the SGI C++
-implementation of red-black trees (stl_tree.h).
+implementation of red-black trees (stl\_tree.h).
 
 I also have to thank the Debian project for providing an amazingly reliable
 and flexible developer station with their operating system. I am sorry for
@@ -65,8 +65,10 @@ Installation
 
 As there is no need to compile any files, you can just:
 
-$ ./configure
-$ sudo make install
+```bash
+./configure
+sudo make install
+```
 
 
 It now also supports cmake, which can be used to build the examples
@@ -76,11 +78,12 @@ To build with cmake, do an out-of-source build like so:
 # ASSUMING you have decompressed it into a directory called libkdtree,
 # and you are currently in that directory...
 
-$ cd ..  # go up, out of the kdtree source directory
-$ mkdir build
-$ cd build
-$ cmake ../libkdtree
-$ make
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
 
 
 You can use cmake to build the tests and examples on Windows with
@@ -103,7 +106,9 @@ A simple example program is provided in the ./examples directory
 For those using the ./configure system, the library supports pkg-config.
 Thus, to compile with the library,
 
+```c++
   #include <kdtree++/kdtree.hpp>
+```
 
 and append the output of `pkg-config libkdtree++ --cflags` to your $CPPFLAGS.
 

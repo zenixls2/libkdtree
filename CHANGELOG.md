@@ -10,13 +10,13 @@ libkdtree++ ChangeLog
 2008-11-17  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
 	- Added #include<cstdio> in order to compile 'printf' statements in the
-	file 'examples/test_find_within_range.cpp'.
+	  file 'examples/test_find_within_range.cpp'.
 	- Added patch from Max Fellermann in order to compile libkdtree++ with
-	clang++.
+	  clang++.
 
 2009-02-10  Paul Harris <paulharris@computer.org>
 
-   - Bug fix: was incorrectly casting a pointer when the search key type
+	- Bug fix: was incorrectly casting a pointer when the search key type
 	  was different to the stored type.
 
 2008-12-30  Paul Harris <paulharris@computer.org>
@@ -56,24 +56,24 @@ libkdtree++ ChangeLog
 	- The version number of the library is now part of the headers.
 	- Fixed a bug with assignment operator.
 	- Fixed uninitialized memory problem with valgrind, when printing the
-	content of the tree. Due to the fact the _M_header was a _Link_type
-	instead of a _Node_base type and _M_root was a _Base_ptr type instead of
-	a _Link_type.
+	  content of the tree. Due to the fact the _M_header was a _Link_type
+	  instead of a _Node_base type and _M_root was a _Base_ptr type instead of
+	  a _Link_type.
 	- Paul Harris fixed find() by ensuring that the correct node is being
-	matched during a find(). Thus, fixed a similar problem in erase. Paul
-	also added a new test courtesy of Hayne.
+	  matched during a find(). Thus, fixed a similar problem in erase. Paul
+	  also added a new test courtesy of Hayne.
 	- Paul Harris augmented test_kdtree with various test on copy
-	construction, assignment, and formatting operator.
+	  construction, assignment, and formatting operator.
 	- Paul Harris added support for CMake, which should suit not only
-	MSVC users but others too.
+	  MSVC users but others too.
 	- Paul Harris fixed bug with compiling with MSVC2005 with the 64bit
-	warnings turned on.
+	  warnings turned on.
 
 2008-11-12  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
 	- Fix segfault on the regular iterator when _M_header->_M_right ==
-	_M_root. Fix segfault on the reverse iterator when _M_header->_M_left ==
-	_M_root.
+	  _M_root. Fix segfault on the reverse iterator when _M_header->_M_left ==
+	  _M_root.
 
 	Besides, it also change the behavior when iterating past the end() or
 	rend(). Previously this would result in segfaults, now it makes the
@@ -83,62 +83,62 @@ libkdtree++ ChangeLog
 2008-11-10  Sylvain Bougerel  <sylvain.bougerel@asia.thalesgroup.com>
 
 	- kdtree++/iterator.hpp (KDTree): the decrement iterator was
-	ill-written. Its buggy behavior, and the use of non-standard
-	reverse_iterator initialiser needed to be fixed. These error were do to
-	a previous failed attempt by me at fixing the reverse_iterator.
+	  ill-written. Its buggy behavior, and the use of non-standard
+	  reverse_iterator initialiser needed to be fixed. These error were do to
+	  a previous failed attempt by me at fixing the reverse_iterator.
 
-	This time, I believe I got it right, however it needed the kdtree
-	structure to be modified. The reason is that without modification it is
-	not possible to distinguish the "header" from the "root" within the
-	iterator. This is required for the reverse_iterator to work properly.
+	  This time, I believe I got it right, however it needed the kdtree
+	  structure to be modified. The reason is that without modification it is
+	  not possible to distinguish the "header" from the "root" within the
+	  iterator. This is required for the reverse_iterator to work properly.
 
-	Now the kdtree has an additional pointer that points directly to the
-	root. The parent pointer of the header is permanently null. And
-	therefore the header can be distinguished from the root within the
-	iterator by checking the parent of the current node: if it is null, we
-	are at the header.
+	  Now the kdtree has an additional pointer that points directly to the
+	  root. The parent pointer of the header is permanently null. And
+	  therefore the header can be distinguished from the root within the
+	  iterator by checking the parent of the current node: if it is null, we
+	  are at the header.
 
 
 2008-11-10 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
 	- patch from Martin Shreiber to make libkdtree to compile with newer
-	version of g++-4.2 and g++4.3.
+	  version of g++-4.2 and g++4.3.
 
 	- patch from Paul Harris to make libkdtree more exception transparent.
 
 2007-12-08 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
 	- fix bug where find_nearest() could return the wrong value if a
-	maximum distance greater than the root distance to the target value
-	was given in argument to the function.
+	  maximum distance greater than the root distance to the target value
+	  was given in argument to the function.
 
 	- find_nearest() still returns SQUARED value of the distance. You still
-	have to use sqrt() on the second member of the iterator.
+	  have to use sqrt() on the second member of the iterator.
 
 	- find_nearest() behavior was slightly changed: if many nodes are at
-	the same distance from the target value, the node with the lowest
-	memory address will be returned. This is to catter for the
-	reimplementation of find_exact() coming soon.
+	  the same distance from the target value, the node with the lowest
+	  memory address will be returned. This is to catter for the
+	  reimplementation of find_exact() coming soon.
 
 2007-12-02 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
 	- find_nearest() now returned the SQUARED value of the distance for
-	euclidean space calculation (the default). You have to use sqrt() on
-	the returned distance (i.e. iterator->second) if you want to read the
-	absolute distance returned by find_nearest. My apologies for not
-	making highlighting this beforehand.
+	  euclidean space calculation (the default). You have to use sqrt() on
+	  the returned distance (i.e. iterator->second) if you want to read the
+	  absolute distance returned by find_nearest. My apologies for not
+	  making highlighting this beforehand.
 
 	- Increased the performance of find and find_nearest/find_nearest_if by
-	about 50x to 100x depending on your compilation flags.
+	  about 50x to 100x depending on your compilation flags.
 
 	- KDTree are not defined as:
-	KDTree<__K, _Val, _Acc, _Cmp, _Alloc>
-	but as:
-	KDTree<__K, _Val, _Acc, _Dist, _Cmp, _Alloc>
-	So pay attention to the _Dist functor. The distance functor calculate
-	the squared difference between 2 elements returned by the accessor. You
-	might have to change your code to reflect the new definition, or it wont
-	compile if you have set custom accessor and comparison functors.
+	  KDTree<__K, _Val, _Acc, _Cmp, _Alloc>
+	  but as:
+	  KDTree<__K, _Val, _Acc, _Dist, _Cmp, _Alloc>
+	  So pay attention to the _Dist functor. The distance functor calculate
+	  the squared difference between 2 elements returned by the accessor. You
+	  might have to change your code to reflect the new definition, or it wont
+	  compile if you have set custom accessor and comparison functors.
 
 	- The following functors are now accessible in the tree:
 		- the comparison functor, accessible by copy only
@@ -148,11 +148,11 @@ libkdtree++ ChangeLog
 		find_nearest_if within the same KDTree object.
 
 	- find_exact has not be modified and retained the code of the former,
-	slower algorithm. I have to write some more code to do this. Pls wait a
-	little more.
+	  slower algorithm. I have to write some more code to do this. Pls wait a
+	  little more.
 
 	- The file accessor.hpp was renamed as function.hpp for it now boast
-	more than just the KDTree accessor
+	  more than just the KDTree accessor
 
 2007-11-25 Sylvain Bougerel (sylvain.bougerel.devel@gmail.com)
 
@@ -170,15 +170,15 @@ libkdtree++ ChangeLog
 		- const kdtrees can be searched
 		- find_nearest_if() enforce validation of a predicate
 		- visit_within_range() walk the tree and calls
-		Visitor::operator() on template argument <Visitor> for
-		each node within the range
+		  Visitor::operator() on template argument <Visitor> for
+		  each node within the range
 	- find_exact() matches an kdtree::value_type by location and by
-	calling kdtree::value_type::operator==() (in case two different
-	items have the same location find_exact() will not return the
-	wrong item)
+	  calling kdtree::value_type::operator==() (in case two different
+	  items have the same location find_exact() will not return the
+	  wrong item)
 	- erase_exact() is to erase() what find_exact() is to find()
 	- check_tree() and num_dist_calcs for debugging purpose plus
-	additional improvements on erase and region intersection
+	  additional improvements on erase and region intersection
 
 2004-11-26  Paul Harris (paulharris@computer.org)
 
@@ -205,21 +205,21 @@ libkdtree++ ChangeLog
 
 	- Renamed optimise() to optimize().
 	- Added a full set of range constructors and insert(range) methods.
-		it now works with inserter(tree,tree.begin())
+	  it now works with inserter(tree,tree.begin())
 	- Target type no longer needs a default constructor. This also fixes
-		problems with empty trees (would crash if optimized).
+	  problems with empty trees (would crash if optimized).
 	- Some code cleanup (removed inlines, switched from const_iterator to
-		iterator, added this-> to ensure the methods are called).
+	  iterator, added this-> to ensure the methods are called).
 	- Added a new method: count_within_range().
 	- Fixed bug in rend().
 
 2004-11-04  Martin F. Krafft (libkdtree@pobox.madduck.net)
 
 	- Integrated patch by Paul Harris to fix a logic error pertaining to
-		OutputIterators in find_within_range. find_within_range() now
-		returns the output iterator instead of a count. Thanks, Paul!
+	  OutputIterators in find_within_range. find_within_range() now
+	  returns the output iterator instead of a count. Thanks, Paul!
 	- Added another fix by Paul Harris to _M_get_j_max, which would cause
-		a dimensional overflow for trees with depths >= K. Thanks (again) Paul!
+	  a dimensional overflow for trees with depths >= K. Thanks (again) Paul!
 	- Made some improvements to the autotools files.
 
 2004-05-11  Martin F. Krafft (libkdtree@pobox.madduck.net)
