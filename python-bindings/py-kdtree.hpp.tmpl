@@ -35,14 +35,11 @@
 #include <vector>
 #include <limits>
 
-template <size_t DIM, typename COORD_T, typename DATA_T > 
+template <typename COORD_T, typename DATA_T > 
 struct record_t {
-  static const size_t dim = DIM;
   typedef COORD_T coord_t;
   typedef DATA_T data_t;
-
-  typedef coord_t point_t[dim];
- 
+  typedef coord_t* point_t;
   inline coord_t operator[](size_t const N) const { return point[N]; }
 
   point_t point;
@@ -61,15 +58,19 @@ typedef double RANGE_T;
 template <class RECORD_T>
 inline double tac(RECORD_T r, int k) { return r[k]; }
 
-template <size_t DIM, typename COORD_T, typename DATA_T > 
+template <typename COORD_T, typename DATA_T > 
 class PyKDTree {
 public:
+  typedef record_t<COORD_T, DATA_T> RECORD_T;
 
-  typedef record_t<DIM, COORD_T, DATA_T> RECORD_T;
-  typedef KDTree::KDTree<DIM, RECORD_T, std::pointer_to_binary_function<RECORD_T,int,double> > TREE_T;
+private:
+  typedef KDTree::KDTree<RECORD_T, std::pointer_to_binary_function<RECORD_T,int,double> > TREE_T;
   TREE_T tree;
 
-  PyKDTree() : tree(std::ptr_fun(tac<RECORD_T>)) {  };
+public:
+  const size_t _dim;
+  PyKDTree(size_t dim) : tree(dim, std::ptr_fun(tac<RECORD_T>)), _dim(dim) {}
+
 
   void add(RECORD_T T) { tree.insert(T); };
 
@@ -102,14 +103,14 @@ public:
 
   size_t count_within_range(typename RECORD_T::point_t T, RANGE_T range) {
     RECORD_T query_record;
-    memcpy(query_record.point, T, sizeof(COORD_T)*DIM);
+    memcpy(query_record.point, T, sizeof(COORD_T)*tree.dimension());
 
     return tree.count_within_range(query_record, range);
   }
 
   std::vector<RECORD_T >* find_within_range(typename RECORD_T::point_t T, RANGE_T range) {
     RECORD_T query_record;
-    memcpy(query_record.point, T, sizeof(COORD_T)*DIM);
+    memcpy(query_record.point, T, sizeof(COORD_T)*tree.dimension());
 
     std::vector<RECORD_T> *v = new std::vector<RECORD_T>;
     tree.find_within_range(query_record, range, std::back_inserter(*v));
@@ -119,7 +120,7 @@ public:
   RECORD_T* find_nearest (typename RECORD_T::point_t T) {
     RECORD_T* found = NULL;
     RECORD_T query_record;
-    memcpy(query_record.point, T, sizeof(COORD_T)*DIM);
+    memcpy(query_record.point, T, sizeof(COORD_T)*tree.dimension());
 
     std::pair<typename TREE_T::const_iterator, typename TREE_T::distance_type> best = 
       tree.find_nearest(query_record, std::numeric_limits<typename TREE_T::distance_type>::max());

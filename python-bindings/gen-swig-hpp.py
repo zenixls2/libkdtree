@@ -14,7 +14,7 @@ def write_swig_file(tmpl_fn_name, swig_fn_name):
     TMPL_SEPARATOR=[]
 
     TMPL_RECORD_DEF="""\
-#define RECORD_%i%s%s record_t<%i, %s, %s> // cf. py-kdtree.hpp
+#define RECORD_%i%s%s record_t<%s, %s> // cf. py-kdtree.hpp
 """
     TMPL_RECORD=[]
 
@@ -32,7 +32,7 @@ def write_swig_file(tmpl_fn_name, swig_fn_name):
   } else {
     PyErr_SetString(PyExc_TypeError,"expected a tuple.");
     return NULL;
-  } 
+  }
  }
 """
     TMPL_IN_CONV_RECORD=[]
@@ -51,7 +51,7 @@ def write_swig_file(tmpl_fn_name, swig_fn_name):
    } else {
      PyErr_SetString(PyExc_TypeError,"expected a tuple.");
      return NULL;
-   } 
+   }
   }
  """
     TMPL_IN_CONV_POINT=[]
@@ -121,7 +121,9 @@ def write_swig_file(tmpl_fn_name, swig_fn_name):
 
     TMPL_PY_CLASS_DEF="""\
 %%template () RECORD_%i%s%s;
-%%template (KDTree_%i%s)   PyKDTree<%i, %s, %s>;
+%%nodefaultctor KDTree_%i%s;
+%%nodefaultctor PyKDTree<%s, %s>;
+%%template (KDTree_%i%s)   PyKDTree<%s, %s>;
 """
     TMPL_PY_CLASS=[]
 
@@ -135,7 +137,7 @@ def write_swig_file(tmpl_fn_name, swig_fn_name):
 
         TMPL_SEPARATOR.append(TMPL_SEPARATOR_DEF%(",".join([coord_t for _ in range(dim)]), data_t))
 
-        TMPL_RECORD.append(TMPL_RECORD_DEF%(dim, coord_t_short, data_t_short, dim, coord_t, data_t))
+        TMPL_RECORD.append(TMPL_RECORD_DEF%(dim, coord_t_short, data_t_short, coord_t, data_t))
 
         TMPL_IN_CONV_RECORD.append(TMPL_IN_CONV_RECORD_DEF%\
                                    (dim, coord_t_short, data_t_short,
@@ -167,7 +169,9 @@ def write_swig_file(tmpl_fn_name, swig_fn_name):
 
         TMPL_PY_CLASS.append(TMPL_PY_CLASS_DEF%\
                              (dim, coord_t_short, data_t_short,
-                              dim, coord_t.capitalize(), dim, coord_t, data_t)
+                              dim, coord_t.capitalize(),
+                              coord_t_short, data_t_short,
+                              dim, coord_t.capitalize(), coord_t, data_t)
                              )
 
 
@@ -199,12 +203,13 @@ def write_hpp_file(tmpl_fn_name, hpp_fn_name):
     TMPL_SEPARATOR=[]
 
     TMPL_RECORD_DEF = """\
-#define RECORD_%i%s%s record_t<%i, %s, %s>
-#define KDTREE_TYPE_%i%s%s KDTree::KDTree<%i, RECORD_%i%s%s, std::pointer_to_binary_function<RECORD_%i%s%s,int,double> >
+#define RECORD_%i%s%s record_t<%s, %s>
+#define KDTREE_TYPE_%i%s%s KDTree::KDTree<RECORD_%i%s%s, std::pointer_to_binary_function<RECORD_%i%s%s,int,double> >
 """
     TMPL_RECORD=[]
 
     TMPL_OP_EQ_DEF = """\
+#ifndef _%s%s
 inline bool operator==(RECORD_%i%s%s const& A, RECORD_%i%s%s const& B) {
     return %s && A.data == B.data;
 }
@@ -216,6 +221,8 @@ std::ostream& operator<<(std::ostream& out, RECORD_%i%s%s const& T)
 {
     return out << '(' << %s << '|' << T.data << ')';
 }
+#define _%s%s
+#endif
 """
     TMPL_OP_OUT = []
     
@@ -229,19 +236,21 @@ std::ostream& operator<<(std::ostream& out, RECORD_%i%s%s const& T)
         TMPL_SEPARATOR.append(TMPL_SEPARATOR_DEF%(",".join([coord_t for _ in range(dim)]), data_t))
 
         TMPL_RECORD.append(TMPL_RECORD_DEF%(dim, coord_t_short, data_t_short,
-                                            dim, coord_t, data_t,
+                                            coord_t, data_t,
                                             dim, coord_t_short, data_t_short,
-                                            dim,
                                             dim, coord_t_short, data_t_short,
                                             dim, coord_t_short, data_t_short)
                            )
 
-        TMPL_OP_EQ.append(TMPL_OP_EQ_DEF%(dim, coord_t_short, data_t_short,
+        TMPL_OP_EQ.append(TMPL_OP_EQ_DEF%(coord_t_short, data_t_short,
+                                          dim, coord_t_short, data_t_short,
                                           dim, coord_t_short, data_t_short,
                                           " && ".join(["A.point[%i] == B.point[%i]"%(i,i) for i in range(dim)])))
 
-        TMPL_OP_OUT.append(TMPL_OP_OUT_DEF%(dim, coord_t_short, data_t_short,
-                                            " << ',' << ".join(["T.point[%i]"%i for i in range(dim)])))
+        TMPL_OP_OUT.append(TMPL_OP_OUT_DEF%(
+            dim, coord_t_short, data_t_short,
+            " << ',' << ".join(["T.point[%i]"%i for i in range(dim)]),
+            coord_t_short, data_t_short))
 
 
     TMPL_BODY_LIST = []
