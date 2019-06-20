@@ -41,7 +41,7 @@ inline bool operator!=(_Iterator<_Val, _Val&, _Val*> const&,
                        _Iterator<_Val, const _Val&, const _Val*> const&);
 
 class _Base_iterator {
- protected:
+ public:
   typedef _Node_base::_Base_const_ptr _Base_const_ptr;
   _Base_const_ptr _M_node;
 
@@ -95,7 +95,7 @@ class _Base_iterator {
 };
 
 template <typename _Val, typename _Ref, typename _Ptr>
-class _Iterator : protected _Base_iterator {
+class _Iterator : public _Base_iterator {
  public:
   typedef _Val value_type;
   typedef _Ref reference;
