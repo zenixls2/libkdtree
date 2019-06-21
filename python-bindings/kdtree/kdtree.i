@@ -4,76 +4,29 @@
 %include <iterator.i>
 
 %{
+#include <iterator>
 #include "kdtree++/node.hpp"
 #include "kdtree++/iterator.hpp"
 #include "kdtree++/kdtree.hpp"
 %}
 
-%define VECTOR_DEFINE(T)
+%define BASE_DEFINE(T)
     %template(Vector_ ## T) std::vector<##T>;
     %template(node_ ##T) KDTree::_Node<std::vector<##T> >;
     %template(iterator_ ##T) KDTree::_Iterator<std::vector<##T>, std::vector<##T>&, std::vector<##T>*>;
     %template(const_iterator_ ##T) KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const*>;
+    %template(iterator_traits_ ##T) std::iterator_traits<KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const*> >;
+    %template(base_iterator_ ##T) std::iterator<std::bidirectional_iterator_tag, std::vector<##T>, ptrdiff_t, std::vector<##T> const*, std::vector<##T> const&>;
+    %template(reverse_iterator_ ##T) std::reverse_iterator<KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const*> >;
 
 %enddef
 
-VECTOR_DEFINE(int);
-VECTOR_DEFINE(long);
-VECTOR_DEFINE(double);
-VECTOR_DEFINE(float);
+BASE_DEFINE(int);
+BASE_DEFINE(long);
+BASE_DEFINE(double);
+BASE_DEFINE(float);
 
 namespace KDTree {
-/*struct _Node_base {
-    _Node_base* _M_parent;
-    _Node_base* _M_left;
-    _Node_base* _M_right;
-    _Node_base(_Node_base* const parent=NULL,
-               _Node_base* const left=NULL,
-               _Node_base* const right=NULL);
-};
-
-
-template<typename _Val>
-struct _Node : public _Node_base {
-    _Val _M_value;
-    _Node(_Val const& __VALUE = _Val(),
-          _Node_base* const __PARENT=NULL,
-          _Node_base* const __LEFT=NULL,
-          _Node_base* const __RIGHT=NULL);
-};*/
-
-/*class _Base_iterator {
-protected:
-    typedef _Node_base const* _Base_const_ptr;
-    _Base_iterator(_Base_const_ptr const __N = NULL);
-    _Base_iterator(_Base_iterator const& __THAT);
-};
-
-
-template<typename _Val, typename _Ref, typename _Ptr>
-class _Iterator : protected _Base_iterator {
-public:
-    typedef _Val value_type;
-    typedef _Ref reference;
-    typedef _Ptr pointer;
-    typedef _Iterator<_Val, _Val&, _Val*> iterator;
-    typedef _Iterator<_Val, _Val const&, _Val const*> const_iterator;
-    typedef _Iterator<_Val, _Ref, _Ptr> _Self;
-    typedef _Node<_Val> const* _Link_const_type;
-    typedef std::bidirectional_iterator_tag iterator_category;
-    typedef ptrdiff_t difference_type;
-
-    _Iterator();
-    _Iterator(_Iterator<_Val, _Val&, _Val*> const& __THAT);
-    %rename(get) operator*();
-    _Ref operator*() const;
-    _Ptr operator->() const;
-    %rename(next) operator++;
-    _Iterator<_Val, _Ref, _Ptr> operator++();
-    %rename(prev) operator--;
-    _Iterator<_Val, _Ref, _Ptr> operator--();
-};
-*/
 template <typename _Val,
           typename _Acc = _Bracket_accessor<_Val>,
           typename _Dist = squared_difference<typename _Acc::result_type,
@@ -109,17 +62,14 @@ public:
     void check_tree();
 
     _Iterator<_Val, _Val const&, _Val const*> begin() const;
-    /*_Iterator<_Val, _Val const&, _Val const*> end() const;
+    _Iterator<_Val, _Val const&, _Val const*> end() const;
     std::reverse_iterator<
         _Iterator<_Val, _Val const&, _Val const*> > rbegin() const;
     std::reverse_iterator<
-        _Iterator<_Val, _Val const&, _Val const*> > rend() const;*/
+        _Iterator<_Val, _Val const&, _Val const*> > rend() const;
 
 };
 %define KDTREE_DEFINE(T)
-    /*%template(node_ ## T) _Node<std::vector<##T> >;
-    %template(const_iterator_ ## T) _Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const* >;
-    %template(iterator_ ## T) _Iterator<std::vector<##T>, std::vector<##T>&, std::vector<##T>* >;*/
     %template(KDTree_ ## T) KDTree<std::vector<##T> >;
 %enddef
 
@@ -129,10 +79,4 @@ KDTREE_DEFINE(double);
 KDTREE_DEFINE(float);
 
 }
-
-/*%define ITERATOR_DEFINE(T)
-    %template(const_iterator_ ## T) KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const* >;
-%enddef
-
-ITERATOR_DEFINE(int);*/
 

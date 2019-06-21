@@ -1,0 +1,13 @@
+import kdtree
+a = kdtree.KDTree_int(2)
+a.add([1,2])
+a.add([3,2])
+b = a.rbegin()
+print(b.get())
+c = b.next()
+print(b.get())
+print(c.get())
+b.prev()
+print(b.get())
+print(b == a.rbegin())
+print(c.next() == a.rend())

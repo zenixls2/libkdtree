@@ -4,9 +4,77 @@
 %include <node.i>
 
 %{
+#include <iterator>
 #include "kdtree++/iterator.hpp"
 %}
+namespace std {
+template<typename _Category, typename _Tp, typename _Distance = ptrdiff_t,
+         typename _Pointer, typename _Reference>
+struct iterator {
+    typedef _Category iterator_category;
+    typedef _Tp value_type;
+    typedef _Distance difference_type;
+    typedef _Pointer pointer;
+    typedef _Reference reference;
+};
 
+template<typename _Iterator>
+struct iterator_traits {
+    typedef typename _Iterator::itertaor_category iterator_category;
+    typedef typename _Iterator::value_type value_type;
+    typedef typename _Iterator::difference_type difference_type;
+    typedef typename _Iterator::pointer pointer;
+    typedef typename _Iterator::reference reference;
+
+};
+
+template<typename _Iterator>
+class reverse_iterator
+: public iterator<typename _Iterator::iterator_category,
+                  typename _Iterator::value_type,
+                  typename _Iterator::difference_type,
+                  typename _Iterator::pointer,
+                  typename _Iterator::reference> {
+public:
+    /* from stl_iterator_base_types.h struct iterator_traits */
+    typedef _Iterator iterator_type;
+    typedef typename _Iterator::itertaor_category iterator_category;
+    typedef typename _Iterator::value_type value_type;
+    typedef typename _Iterator::difference_type difference_type;
+    typedef typename _Iterator::pointer pointer;
+    typedef typename _Iterator::reference reference;
+
+    reverse_iterator();
+    reverse_iterator(iterator_type __x);
+    reverse_iterator(const reverse_iterator<_Iterator>& x);
+    iterator_type base() const;
+    %extend {
+        const value_type& get() throw (std::runtime_error) {
+            _Iterator __tmp = self->base();
+            return *(--__tmp);
+        }
+        const reverse_iterator<_Iterator> next() {
+            /* cannot call the operator directly */
+            _Iterator __tmp = self->base();
+            --__tmp;
+            std::reverse_iterator<_Iterator> iter(__tmp);
+            *self = iter;
+            return iter;
+        }
+        const reverse_iterator<_Iterator> prev() {
+            /* cannot call the operator directly */
+            _Iterator __tmp = self->base();
+            ++__tmp;
+            std::reverse_iterator<_Iterator> iter(__tmp);
+            *self = iter;
+            return iter;
+        }
+        bool __eq__(reverse_iterator<_Iterator> o) {
+            return *self == o;
+        }
+    }
+};
+}
 namespace KDTree {
 class _Base_iterator {
 public:
@@ -47,6 +115,9 @@ public:
         _Self prev() {
             self->_M_decrement();
             return *self;
+        }
+        bool __eq__(const _Iterator<_Val, _Ref, _Ptr> o) {
+            return *self == o;
         }
     }
 };
