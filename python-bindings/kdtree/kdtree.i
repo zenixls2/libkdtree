@@ -2,6 +2,8 @@
 %include <std_common.i>
 %include <std_vector.i>
 %include <iterator.i>
+%include <function.i>
+%include <region.i>
 
 %{
 #include <iterator>
@@ -12,13 +14,16 @@
 
 %define BASE_DEFINE(T)
     %template(Vector_ ## T) std::vector<##T>;
+    %template(Pair_ ## T) std::pair<##T, ##T>;
     %template(node_ ##T) KDTree::_Node<std::vector<##T> >;
     %template(iterator_ ##T) KDTree::_Iterator<std::vector<##T>, std::vector<##T>&, std::vector<##T>*>;
     %template(const_iterator_ ##T) KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const*>;
     %template(iterator_traits_ ##T) std::iterator_traits<KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const*> >;
     %template(base_iterator_ ##T) std::iterator<std::bidirectional_iterator_tag, std::vector<##T>, ptrdiff_t, std::vector<##T> const*, std::vector<##T> const&>;
     %template(reverse_iterator_ ##T) std::reverse_iterator<KDTree::_Iterator<std::vector<##T>, std::vector<##T> const&, std::vector<##T> const*> >;
-
+    %template(Bracket_accessor_ ## T) KDTree::_Bracket_accessor<std::vector<##T> >;
+    %template(squared_difference_ ## T) KDTree::squared_difference<##T, ##T>;
+    %template(Region_ ## T) KDTree::_Region<std::vector<##T>, ##T, KDTree::_Bracket_accessor<std::vector<##T> >, std::less<##T> >;
 %enddef
 
 BASE_DEFINE(int);
@@ -46,6 +51,9 @@ public:
     typedef const_iterator itertator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef typename _Acc::result_type subvalue_type;
+    typedef typename _Dist::result_type distance_type;
+    typedef _Region<_Val, typename _Acc::result_type, _Acc, _Cmp> region_type;
     KDTree(size_type n);
     KDTree(const KDTree& __x);
     size_type size() const;
@@ -67,7 +75,12 @@ public:
         _Iterator<_Val, _Val const&, _Val const*> > rbegin() const;
     std::reverse_iterator<
         _Iterator<_Val, _Val const&, _Val const*> > rend() const;
-
+    _Iterator<_Val, _Val const&, _Val const*> find(_Val const& V) const;
+    _Iterator<_Val, _Val const&, _Val const*> find_exact(_Val const& V) const;
+    size_type count_within_range(_Val const& __V, _Val::value_type const __R) const;
+    size_type count_within_range(
+        _Region<_Val, _Val::value_type, _Bracket_accessor<_Val>,
+                std::less<_Val::value_type> >  const& __REGION) const;
 };
 %define KDTREE_DEFINE(T)
     %template(KDTree_ ## T) KDTree<std::vector<##T> >;
